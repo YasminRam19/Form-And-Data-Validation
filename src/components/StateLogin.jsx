@@ -22,6 +22,11 @@ export default function Login() {
     setEnteredPassword(event.target.value);
   };*/
 
+  setEnteredValues({
+    email: "",
+    password: "",
+  });
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(`User emial: ${enteredEmail}`);
