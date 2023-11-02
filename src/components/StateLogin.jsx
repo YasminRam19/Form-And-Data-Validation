@@ -1,17 +1,6 @@
 import { useState } from "react";
 
 export default function Login() {
-  const [enteredValues, setEnteredValues] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleInputChange = (identifier, value) => {
-    setEnteredValues((prevValues) => ({
-      ...prevValues,
-      [identifier]: value,
-    }));
-  };
   /*const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
 
@@ -21,11 +10,30 @@ export default function Login() {
   const handlePasswordChange = (target) => {
     setEnteredPassword(event.target.value);
   };*/
-
-  setEnteredValues({
+  const [enteredValues, setEnteredValues] = useState({
     email: "",
     password: "",
   });
+
+  const [didEdit, setDidEdit] = useState({
+    email: false,
+    password: false,
+  });
+
+  const handleInputChange = (identifier, value) => {
+    setEnteredValues((prevValues) => ({
+      ...prevValues,
+      [identifier]: value,
+    }));
+    setDidEdit((prevEdit) => ({ ...prevEdit, [identifier]: false }));
+  };
+
+  //Invalid email --> If the user did edit the email and does not include @ symbol
+  const emialIsInvalid = didEdit.email && !enteredValues.email.includes("@");
+
+  const handleInputBlur = (identifier) => {
+    setDidEdit((prevEdit) => ({ ...prevEdit, [identifier]: true }));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,7 +53,13 @@ export default function Login() {
             name="email"
             onChange={(event) => handleInputChange("email", event.target.value)}
             value={enteredValues.email}
+            onBlur={() => {
+              handleInputBlur("email");
+            }}
           />
+          <div className="control-error">
+            {emialIsInvalid && <p>Please enter a valid email addres</p>}
+          </div>
         </div>
 
         <div className="control no-margin">
