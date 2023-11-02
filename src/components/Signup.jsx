@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function Signup() {
   const [passwordNotEqual, setPasswordNotEqual] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     //The target of the event is actually the form

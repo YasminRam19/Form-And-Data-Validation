@@ -1,43 +1,32 @@
 import { useState } from "react";
+import { useInput } from "../hooks/useInput";
+import Input from "./Input";
+import { isEmail, isNotEmpty, hasMinLength } from "../util/validation";
 
 export default function Login() {
-  /*const [enteredEmail, setEnteredEmail] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
+  const {
+    value: emailValue,
+    handleInputChange: handleEmailChange,
+    handleInputBlur: handleEmailBlur,
+    hasError: emialIsInvalid,
+  } = useInput("", (value) => isEmail(value) && isNotEmpty(value));
+  const {
+    value: passwordValue,
+    handleInputChange: handlePasswordChange,
+    handleInputBlur: handlePasswordBlur,
+    hasError: passwordIsInvalid,
+  } = useInput("", (value) => hasMinLength(value, 6));
 
-  const handleEmailChange = (event) => {
-    setEnteredEmail(event.target.value);
-  };
-  const handlePasswordChange = (target) => {
-    setEnteredPassword(event.target.value);
-  };*/
-  const [enteredValues, setEnteredValues] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [didEdit, setDidEdit] = useState({
-    email: false,
-    password: false,
-  });
-
-  const handleInputChange = (identifier, value) => {
-    setEnteredValues((prevValues) => ({
-      ...prevValues,
-      [identifier]: value,
-    }));
-    setDidEdit((prevEdit) => ({ ...prevEdit, [identifier]: false }));
-  };
-
-  //Invalid email --> If the user did edit the email and does not include @ symbol
-  const emialIsInvalid = didEdit.email && !enteredValues.email.includes("@");
-
-  const handleInputBlur = (identifier) => {
-    setDidEdit((prevEdit) => ({ ...prevEdit, [identifier]: true }));
-  };
-
+  //Form submitted
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(`User emial: ${enteredEmail}`);
+
+    if (emialIsInvalid || passwordIsInvalid) {
+      return;
+    }
+
+    console.log("Sending HTTP request");
+    console.log(`User emial: ${emailValue}`);
   };
 
   return (
@@ -45,35 +34,26 @@ export default function Login() {
       <h2>Login</h2>
 
       <div className="control-row">
-        <div className="control no-margin">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            onChange={(event) => handleInputChange("email", event.target.value)}
-            value={enteredValues.email}
-            onBlur={() => {
-              handleInputBlur("email");
-            }}
-          />
-          <div className="control-error">
-            {emialIsInvalid && <p>Please enter a valid email addres</p>}
-          </div>
-        </div>
-
-        <div className="control no-margin">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            onChange={(event) =>
-              handleInputChange("password", event.target.value)
-            }
-            value={enteredValues.password}
-          />
-        </div>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          name="email"
+          onChange={handleEmailChange}
+          onBlur={handleEmailBlur}
+          value={emailValue}
+          error={emialIsInvalid && "Please enter a valid email"}
+        />
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          name="password"
+          onChange={handlePasswordChange}
+          onBlur={handlePasswordBlur}
+          value={passwordValue}
+          error={passwordIsInvalid && "Please enter a valid password"}
+        />
       </div>
 
       <p className="form-actions">
